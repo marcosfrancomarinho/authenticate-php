@@ -7,6 +7,8 @@ use App\controllers\LoginUserControllers;
 use App\controllers\RegisterUserControllers;
 use App\controllers\VerifyDatasLoginControllers;
 use App\controllers\VerifyDatasRegisterControllers;
+use App\interfaces\AuthenticateRouterMiddlewaresTypes;
+use App\interfaces\AuthenticateUserAdapterTypes;
 use App\interfaces\DataBaseTypes;
 use App\interfaces\InsertUserAdapterTypes;
 use App\interfaces\LoginUserControllersTypes;
@@ -14,12 +16,15 @@ use App\interfaces\LoginUserServicesTypes;
 use App\interfaces\RegisterUserControllersTypes;
 use App\interfaces\RegisterUserServicesTypes;
 use App\interfaces\SearchUserAdapterTypes;
+use App\middlewares\AuthenticateRouterMiddlewares;
+use App\repository\AuthenticateUserAdapter;
 use App\repository\InsertUserAdapter;
 use App\repository\SearchUserAdapter;
 use App\services\LoginUserServices;
 use App\services\RegisterUserServices;
 use Slim\App;
-
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
 class Router
 {
@@ -30,25 +35,33 @@ class Router
    private static SearchUserAdapterTypes $searchUserAdapter;
    private static LoginUserServicesTypes $loginUserServices;
    private static LoginUserControllersTypes $loginUserControllers;
+   private static AuthenticateUserAdapterTypes $authenticateUserAdapter;
+   private static AuthenticateRouterMiddlewaresTypes $authenticateRouterMiddlewares;
 
    private static function init()
    {
       self::$database = new DataBase();
       self::$insertUserAdapter = new InsertUserAdapter(self::$database);
       self::$searchUserAdapter = new SearchUserAdapter(self::$database);
+      self::$authenticateUserAdapter = new AuthenticateUserAdapter();
       self::$registerUserServices = new RegisterUserServices(self::$insertUserAdapter);
       self::$loginUserServices = new LoginUserServices(self::$searchUserAdapter);
       self::$registerUserControllers = new RegisterUserControllers(self::$registerUserServices);
-      self::$loginUserControllers = new LoginUserControllers(self::$loginUserServices);
+      self::$loginUserControllers = new LoginUserControllers(self::$loginUserServices, self::$authenticateUserAdapter);
       self::$registerUserControllers = new VerifyDatasRegisterControllers(self::$registerUserControllers);
       self::$loginUserControllers = new VerifyDatasLoginControllers(self::$loginUserControllers);
+      self::$authenticateRouterMiddlewares = new AuthenticateRouterMiddlewares(self::$authenticateUserAdapter);
    }
 
 
-   public static function registerRoutes(App $app)
+   public static function allRouters(App $app)
    {
       self::init();
       $app->post("/register", [self::$registerUserControllers, "registerUser"]);
       $app->post("/login", [self::$loginUserControllers, "loginUser"]);
+      $app->get("/", function (Request $request, Response $response,) {
+         $response->getBody()->write("acesso permitido");
+         return $response;
+      })->add([self::$authenticateRouterMiddlewares, "authenticate"]);
    }
 }

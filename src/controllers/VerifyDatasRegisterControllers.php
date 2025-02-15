@@ -35,15 +35,9 @@ class VerifyDatasRegisterControllers implements RegisterUserControllersTypes
          $regex_email = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/";
          $regex_password = "/^[a-zA-Z0-9]{8,10}$/";
 
-         if (!preg_match($regex_name, $name)) {
-            throw new Exception($this->message_error["name"]);
-         }
-         if (!preg_match($regex_email, $email)) {
-            throw new Exception($this->message_error["email"]);
-         }
-         if (!preg_match($regex_password, $password)) {
-            throw new Exception($this->message_error["password"]);
-         }
+         if (!preg_match($regex_name, $name))  throw new Exception($this->message_error["name"]);
+         if (!preg_match($regex_email, $email)) throw new Exception($this->message_error["email"]);
+         if (!preg_match($regex_password, $password))  throw new Exception($this->message_error["password"]);
 
          return $this->registerUserControllers->registerUser($request, $response);
       } catch (Exception $error) {

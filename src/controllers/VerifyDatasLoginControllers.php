@@ -14,6 +14,7 @@ class VerifyDatasLoginControllers implements LoginUserControllersTypes
       "email" => "email inválido",
       "password" => "senha inválida, defina uma senha de 8 carateres"
    ];
+   
    public function __construct(LoginUserControllersTypes $loginUserControllers)
    {
       $this->loginUserControllers = $loginUserControllers;
@@ -32,7 +33,7 @@ class VerifyDatasLoginControllers implements LoginUserControllersTypes
 
          if (!preg_match($regex_email, $email)) throw new Exception($this->message_error["email"]);
          if (!preg_match($regex_password, $password)) throw new Exception($this->message_error["password"]);
-         
+
          return $this->loginUserControllers->loginUser($request, $response);
       } catch (Exception $error) {
          $response->getBody()->write(json_encode(["error" => $error->getMessage()]));

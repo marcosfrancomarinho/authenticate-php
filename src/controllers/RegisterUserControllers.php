@@ -20,14 +20,18 @@ class RegisterUserControllers implements RegisterUserControllersTypes
       try {
          $body = $request->getBody()->getContents();
          $datas = json_decode($body, true);
+
          $name = $datas['name'];
          $email = $datas['email'];
          $password = $datas["password"];
+
          $id = $this->registerUserServices->add($name, $email, $password);
+
          $response->getBody()->write(json_encode([
             "id" => $id,
             "message" => "cadastro feito com sucesso"
          ]));
+         
          return $response->withHeader("Content-Type", "application/json")->withStatus(201);
       } catch (Exception $error) {
          $response->getBody()->write(json_encode(["error" => $error->getMessage()]));

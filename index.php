@@ -12,11 +12,11 @@ $options_cors = [
    "origin" => ["*"],
    "methods" => ["POST"],
    "headers.allow" => ["Authorization", "Content-Type", "X-Requested-With"],
-   "headers.expose" => [],
+   "headers.expose" => ["token"],
    "credentials" => true,
 ];
 $app->add(new CorsMiddleware($options_cors));
-Router::registerRoutes($app);
+Router::allRouters($app);
 
 
 $app->run();
