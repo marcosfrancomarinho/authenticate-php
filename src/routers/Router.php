@@ -5,6 +5,8 @@ namespace App\routers;
 use App\config\DataBase;
 use App\controllers\LoginUserControllers;
 use App\controllers\RegisterUserControllers;
+use App\controllers\VerifyDatasLoginControllers;
+use App\controllers\VerifyDatasRegisterControllers;
 use App\interfaces\DataBaseTypes;
 use App\interfaces\InsertUserAdapterTypes;
 use App\interfaces\LoginUserControllersTypes;
@@ -29,15 +31,17 @@ class Router
    private static LoginUserServicesTypes $loginUserServices;
    private static LoginUserControllersTypes $loginUserControllers;
 
-   public static function init()
+   private static function init()
    {
       self::$database = new DataBase();
       self::$insertUserAdapter = new InsertUserAdapter(self::$database);
-      self::$registerUserServices = new RegisterUserServices(self::$insertUserAdapter);
-      self::$registerUserControllers = new RegisterUserControllers(self::$registerUserServices);
       self::$searchUserAdapter = new SearchUserAdapter(self::$database);
+      self::$registerUserServices = new RegisterUserServices(self::$insertUserAdapter);
       self::$loginUserServices = new LoginUserServices(self::$searchUserAdapter);
+      self::$registerUserControllers = new RegisterUserControllers(self::$registerUserServices);
       self::$loginUserControllers = new LoginUserControllers(self::$loginUserServices);
+      self::$registerUserControllers = new VerifyDatasRegisterControllers(self::$registerUserControllers);
+      self::$loginUserControllers = new VerifyDatasLoginControllers(self::$loginUserControllers);
    }
 
 
