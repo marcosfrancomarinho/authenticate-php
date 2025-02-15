@@ -1,0 +1,23 @@
+{
+	"name": "marco/estudos",
+	"autoload": {
+		"psr-4": {
+			"App\\": "src/"
+		}
+	},
+	"scripts": {
+		"dev": "php -S localhost:8080"
+	},
+	"authors": [
+		{
+			"name": "marcosfrancomarinho",
+			"email": "marcosmarinho19998@gmail.com"
+		}
+	],
+	"require": {
+		"slim/slim": "^4",
+		"slim/psr7": "^1.7",
+		"vlucas/phpdotenv": "^5.6",
+		"automattic/ignorefile": "^3.0"
+	}
+}
