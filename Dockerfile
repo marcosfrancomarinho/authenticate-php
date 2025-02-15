@@ -1,15 +1,16 @@
 # Usar uma imagem oficial PHP com Apache
 FROM php:8.1-apache
 
-# Instalar dependências necessárias para o Composer e o PHP
+# Instalar dependências necessárias para o Composer, PDO e PHP
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
     zip \
     git \
+    libpq-dev \ # Para o PostgreSQL (se estiver usando o PostgreSQL)
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd \
+    && docker-php-ext-install gd pdo pdo_pgsql \ # Instalando PDO e PDO para PostgreSQL
     && apt-get clean
 
 # Baixar e instalar o Composer
