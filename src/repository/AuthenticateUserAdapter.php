@@ -9,6 +9,7 @@ use Exception;
 use Firebase\JWT\Key;
 use stdClass;
 
+
 class AuthenticateUserAdapter implements AuthenticateUserAdapterTypes
 {
    private string $KEY_SECRET;
@@ -23,7 +24,7 @@ class AuthenticateUserAdapter implements AuthenticateUserAdapterTypes
          $payload = [
             "iss" => "http://localhost:5173",
             "iat" => time(),
-            // "exp" => time() + 3600,
+            "exp" => time(),
             "idUser" => $id
          ];
          if (!$this->KEY_SECRET) throw new Exception("KEY SECRET não informada");
