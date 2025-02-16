@@ -18,19 +18,18 @@ class DataBase implements DataBaseTypes
 
    public function __construct()
    {
-      // Dotenv::createImmutable(dirname(__DIR__, 2))->load();
-
+      Dotenv::createImmutable(dirname(__DIR__, 2))->load();
       $this->host = $_ENV["HOST_DB"] ?? getenv("HOST_DB");
       $this->database = $_ENV["DBNAME_DB"] ?? getenv("DBNAME_DB");
       $this->username = $_ENV["USER_DB"] ?? getenv("USER_DB");
       $this->password = $_ENV["PASSWORD_DB"] ?? getenv("PASSWORD_DB");
       $this->port = $_ENV["PORT_DB"] ?? getenv("PORT_DB");
    }
-
+   
    public function connection(): PDO
    {
       try {
-         $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->database};sslmode=verify-ca";
+         $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->database};";
          $database = new PDO($dsn, $this->username, $this->password);
          $database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
          return $database;

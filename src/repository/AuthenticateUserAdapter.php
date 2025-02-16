@@ -14,7 +14,7 @@ class AuthenticateUserAdapter implements AuthenticateUserAdapterTypes
    private string $KEY_SECRET;
    public function __construct()
    {
-      // Dotenv::createImmutable(dirname(__DIR__, 2))->load();
+      Dotenv::createImmutable(dirname(__DIR__, 2))->load();
       $this->KEY_SECRET = $_ENV["KEY_SECRET"] ?? getenv("KEY_SECRET");
    }
    public function genereteToken(int $id): string
