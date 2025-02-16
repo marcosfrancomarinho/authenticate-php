@@ -1,39 +1,30 @@
-# Usar uma imagem oficial PHP com Apache
+# Usando uma imagem base do PHP com Apache
 FROM php:8.1-apache
 
-# Instalar dependências necessárias para o Composer, PDO e PHP
+# Instalar as dependências para PDO, PDO PostgreSQL e Slim
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    zip \
-    git \
-    libpq-dev
+    libpq-dev \
+    libxml2-dev \
+    && docker-php-ext-install pdo pdo_pgsql \
+    && rm -rf /var/lib/apt/lists/*
 
-# Instalar a extensão GD e configurar as dependências corretamente
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/freetype2 --with-jpeg-dir=/usr/include && \
-    docker-php-ext-install gd pdo pdo_pgsql
-
-# Baixar e instalar o Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Habilitar o mod_rewrite do Apache
-RUN a2enmod rewrite
+# Instalar o Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Definir o diretório de trabalho
 WORKDIR /var/www/html
 
-# Copiar os arquivos do projeto para o contêiner
-COPY . /var/www/html
-
-# Expor a porta 80 para acessar o servidor Apache
-EXPOSE 80
+# Copiar o código do projeto para o contêiner
+COPY . .
 
 # Instalar as dependências do Composer
-RUN composer install
+RUN composer install --no-dev --optimize-autoloader
 
-# Configurar o Apache para usar o diretório de trabalho
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+# Ativar o mod_rewrite do Apache (necessário para o Slim)
+RUN a2enmod rewrite
 
-# Comando para rodar o Apache em primeiro plano
+# Expôr a porta do Apache
+EXPOSE 80
+
+# Iniciar o servidor Apache
 CMD ["apache2-foreground"]
