@@ -8,10 +8,11 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     zip \
     git \
-    libpq-dev \ # Para o PostgreSQL (se estiver usando o PostgreSQL)
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_pgsql \ # Instalando PDO e PDO para PostgreSQL
-    && apt-get clean
+    libpq-dev
+
+# Instalar a extensão GD e configurar as dependências corretamente
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/freetype2 --with-jpeg-dir=/usr/include && \
+    docker-php-ext-install gd pdo pdo_pgsql
 
 # Baixar e instalar o Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
