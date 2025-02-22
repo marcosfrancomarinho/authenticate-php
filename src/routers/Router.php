@@ -3,12 +3,14 @@
 namespace App\routers;
 
 use App\config\DataBase;
+use App\controllers\AuthenticateUserControllers;
 use App\controllers\LoginUserControllers;
 use App\controllers\RegisterUserControllers;
 use App\controllers\VerifyDatasLoginControllers;
 use App\controllers\VerifyDatasRegisterControllers;
 use App\interfaces\AuthenticateRouterMiddlewaresTypes;
 use App\interfaces\AuthenticateUserAdapterTypes;
+use App\interfaces\AuthenticateUserControllersType;
 use App\interfaces\DataBaseTypes;
 use App\interfaces\InsertUserAdapterTypes;
 use App\interfaces\LoginUserControllersTypes;
@@ -23,8 +25,6 @@ use App\repository\SearchUserAdapter;
 use App\services\LoginUserServices;
 use App\services\RegisterUserServices;
 use Slim\App;
-use Slim\Psr7\Request;
-use Slim\Psr7\Response;
 
 class Router
 {
@@ -37,6 +37,7 @@ class Router
    private static LoginUserControllersTypes $loginUserControllers;
    private static AuthenticateUserAdapterTypes $authenticateUserAdapter;
    private static AuthenticateRouterMiddlewaresTypes $authenticateRouterMiddlewares;
+   private static AuthenticateUserControllersType $authenticateUserControllers;
 
    private static function init()
    {
@@ -50,6 +51,7 @@ class Router
       self::$loginUserControllers = new LoginUserControllers(self::$loginUserServices, self::$authenticateUserAdapter);
       self::$registerUserControllers = new VerifyDatasRegisterControllers(self::$registerUserControllers);
       self::$loginUserControllers = new VerifyDatasLoginControllers(self::$loginUserControllers);
+      self::$authenticateUserControllers = new AuthenticateUserControllers(self::$searchUserAdapter);
       self::$authenticateRouterMiddlewares = new AuthenticateRouterMiddlewares(self::$authenticateUserAdapter);
    }
 
@@ -59,9 +61,9 @@ class Router
       self::init();
       $app->post("/register", [self::$registerUserControllers, "registerUser"]);
       $app->post("/login", [self::$loginUserControllers, "loginUser"]);
-      $app->get("/", function (Request $request, Response $response,) {
-         $response->getBody()->write("acesso permitido");
-         return $response;
-      })->add([self::$authenticateRouterMiddlewares, "authenticate"]);
+      $app->get(
+         "/authenticate",
+         [self::$authenticateUserControllers, "execute"]
+      )->add([self::$authenticateRouterMiddlewares, "authenticate"]);
    }
 }

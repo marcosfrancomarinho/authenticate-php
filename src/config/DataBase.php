@@ -18,7 +18,7 @@ class DataBase implements DataBaseTypes
 
    public function __construct()
    {
-      // Dotenv::createImmutable(dirname(__DIR__, 2))->load();
+      Dotenv::createImmutable(dirname(__DIR__, 2))->load();
       $this->host = $_ENV["HOST_DB"] ?? getenv("HOST_DB");
       $this->database = $_ENV["DBNAME_DB"] ?? getenv("DBNAME_DB");
       $this->username = $_ENV["USER_DB"] ?? getenv("USER_DB");

@@ -10,13 +10,14 @@ $app = AppFactory::create();
 
 $options_cors = [
    "origin" => ["*"],
-   "methods" => ["POST"],
-   "headers.allow" => ["Authorization", "Content-Type", "X-Requested-With"],
+   "methods" => ["GET", "POST"],
+   "headers.allow" => ["Authorization", "Content-Type", "X-Requested-With", "token"],
    "headers.expose" => ["token"],
    "credentials" => true,
 ];
-$app->add(new CorsMiddleware($options_cors));
-Router::allRouters($app);
 
+$app->add(new CorsMiddleware($options_cors));
+
+Router::allRouters($app);
 
 $app->run();
